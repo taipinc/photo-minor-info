@@ -38,10 +38,10 @@ const Intro = intro ? (await render(intro)).Content : null;
     <p class="semester">{site.semester}</p>
     {courses.some(c => c.data.sample) && <p class="template-note">These are example rows for the template, not actual course offerings.</p>}
     {courses.length ? Array.from(groupedCourses, ([subjectArea, entries], index) => <div class="course-group">
-      <h3 id={`subject-area-${index}`}>{subjectArea}</h3>
       <div class="table-wrap"><table aria-labelledby={`subject-area-${index}`}>
       <caption class="sr-only">{subjectArea} courses and availability for {site.semester}</caption>
-      <thead><tr><th scope="col">Code</th><th scope="col">Course title</th><th scope="col">Running in {site.semester}</th></tr></thead>
+      <colgroup><col class="code-column" /><col /><col class="availability-column" /></colgroup>
+      <thead><tr><th colspan="2" scope="colgroup"><h3 id={`subject-area-${index}`}>{subjectArea}</h3></th><th scope="col">Running in {site.semester}</th></tr></thead>
       <tbody>{entries.map(({ data }) => <tr class:list={{
         'is-running': data.semester === site.semester && data.offered,
         'not-running': data.semester === site.semester && !data.offered,

@@ -42,15 +42,15 @@ p { margin: 0 0 16px; }
 .semester { font-weight: 600; }
 .muted, .template-note { color: #666; font-size: 14px; }
 .course-group { margin-top: 28px; }
-.course-group h3 { font-size: 18px; margin-bottom: 12px; }
+.course-group h3 { font-size: 18px; margin: 0; }
 .table-wrap { overflow-x: auto; }
 table { table-layout: fixed; border-collapse: collapse; width: 100%; font-size: 15px; text-align: left; }
 th, td { overflow-wrap: anywhere; padding: 12px; border: 0; vertical-align: top; }
-th { font-weight: 600; }
+th { font-weight: 600; vertical-align: bottom; }
 tbody td + td { border-left: 1px solid #e5e5e5; }
 tbody tr + tr td, tbody tr:first-child td { border-top: 1px solid #e5e5e5; }
-th:first-child, .course-code { width: 22%; }
-th:last-child, td:last-child { width: 28%; }
+.code-column { width: 22%; }
+.availability-column { width: 28%; }
 .is-running { background: #e9f3ed; color: #293e31; }
 .not-running { background: #fbe9e7; color: #753d36; }
 .status { display: inline-block; font-weight: 600; padding: 1px 8px; border-radius: 6px; }

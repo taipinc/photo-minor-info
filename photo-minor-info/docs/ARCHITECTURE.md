@@ -42,6 +42,7 @@ The intended reference is a plain Notion/Craft document, not a marketing landing
 - On mobile, 12px outer side margins, 20px internal side padding, and 16px gaps.
 - Welcome sentence outside and above a pale yellow warning disclosure with an icon.
 - One surrounding announcement panel: no nested announcement border or extra announcement padding.
+- Each course group has a single table header row: the subject-area heading spans the code and title columns, and the last column reads “Running in [semester]”. Code and Title are not separate visible labels.
 - Course tables have thin gray internal lines, no outer outline, and no vertical dividers or background on the header row. The line below the header separates it from the body.
 - Green rows and labels for Yes; soft red rows and darker red labels for No. Retain text labels so color is not the only indication. Unreviewed semesters show Not updated with neutral styling.
 - Catalog titles link directly to `/courses/CODE/` in a new tab with `noopener noreferrer`.
