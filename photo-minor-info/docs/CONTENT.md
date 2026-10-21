@@ -101,7 +101,7 @@ Spelling must match exactly for courses to appear in the same group. A new subje
 
 ### Each semester
 
-1. Set `semester` in `src/data/site.json`, e.g. `"semester": "Spring 2027"`. This updates the semester display and **Running in Spring 2027** table headers.
+1. Set `semester` in `src/data/site.json`, e.g. `"semester": "Spring 2027"`. This updates the **Running in Spring 2027** table headers.
 2. Review every course against its catalog entry. Set its `semester` to match and its `offered` value appropriately.
 3. Keep a course’s old semester if availability has not been reviewed: it will show **Not updated**, with no Yes/No color. Changing the site semester alone does not confirm availability.
 4. Preview and publish the changes together.

@@ -39,7 +39,6 @@ p { margin: 0 0 16px; }
 .prose pre { overflow: auto; padding: 12px; background: #f6f6f5; }
 .prose code { font-size: .9em; }
 .archive-link { display: inline-block; margin-top: 16px; }
-.semester { font-weight: 600; }
 .muted, .template-note { color: #666; font-size: 14px; }
 .course-group { margin-top: 28px; }
 .course-group h3 { font-size: 18px; margin: 0; }
