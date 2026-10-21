@@ -1,0 +1,27 @@
+---
+import site from '../data/site.json';
+import { pathTo } from '../lib/content';
+import '../styles/global.css';
+interface Props { title?: string; home?: boolean }
+const { title, home = false } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={site.description} />
+    <meta name="theme-color" content="#ffffff" />
+    <title>{title ? `${title} · ${site.title}` : `${site.title} · Parsons`}</title>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    {home && <figure class="cover">
+      <img src={pathTo(site.coverImage)} alt={site.coverAlt} style={`object-position: ${site.coverPosition}`} fetchpriority="high" />
+      {site.coverCredit && <figcaption>{site.coverCredit}</figcaption>}
+    </figure>}
+    <div class:list={['sheet', { 'inner-sheet': !home }]}>
+      <main id="main"><slot /></main>
+    </div>
+  </body>
+</html>

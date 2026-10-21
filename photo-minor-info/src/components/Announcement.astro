@@ -1,0 +1,12 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { dateLabel } from '../lib/content';
+interface Props { entry: CollectionEntry<'announcements'> }
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+<article class="announcement">
+  <h3>{entry.data.title}</h3>
+  <div class="post-meta"><time datetime={entry.data.date.toISOString()}>{dateLabel(entry.data.date)}</time>{entry.data.sample && <span class="sample">Example announcement</span>}</div>
+  <div class="prose"><Content /></div>
+</article>

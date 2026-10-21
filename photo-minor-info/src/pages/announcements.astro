@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Announcement from '../components/Announcement.astro';
+import { publishedAnnouncements, pathTo } from '../lib/content';
+const posts = await publishedAnnouncements();
+---
+<Layout title="Announcements">
+  <a class="archive-link" href={`${pathTo()}#announcements`}>Back to the info page</a>
+  <h1 class="archive-heading">Announcements</h1>
+  {posts.length ? posts.map(entry => <div class="archive-entry"><Announcement entry={entry} /></div>) : <p class="empty">No announcements yet.</p>}
+</Layout>
