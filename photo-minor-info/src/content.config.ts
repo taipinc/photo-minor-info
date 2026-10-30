@@ -6,6 +6,13 @@ const announcements = defineCollection({
   schema: z.object({
     title: z.string().min(1), date: z.coerce.date(),
     draft: z.boolean().default(false), sample: z.boolean().default(false),
+    gallery: z.array(z.object({
+      image: z.string().startsWith('images/'),
+      thumbnail: z.string().startsWith('images/'),
+      alt: z.string().min(1),
+      width: z.number().int().positive(),
+      height: z.number().int().positive(),
+    })).optional(),
   }),
 });
 const courses = defineCollection({
@@ -14,6 +21,7 @@ const courses = defineCollection({
     code: z.string().min(1), title: z.string().min(1), offered: z.boolean(),
     semester: z.string().min(1),
     subjectArea: z.string().min(1),
+    new: z.boolean().default(false),
     catalogUrl: z.url().refine(url => {
       const parsed = new URL(url);
       return parsed.protocol === 'https:' && parsed.hostname === 'courses.newschool.edu';

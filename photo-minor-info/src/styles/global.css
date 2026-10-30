@@ -7,6 +7,7 @@
   line-height: 1.6;
 }
 body { margin: 0; }
+html { scrollbar-gutter: stable; }
 a { color: inherit; text-underline-offset: 3px; }
 a:hover { color: #555; }
 a:focus-visible { outline: 2px solid #555; outline-offset: 4px; }
@@ -26,8 +27,19 @@ p { margin: 0 0 16px; }
 .warning-callout { display: flex; align-items: flex-start; gap: 12px; padding: 20px; border-radius: 14px; background: #fff5cf; color: #574419; }
 .warning-icon { flex: 0 0 22px; margin-top: 3px; color: #86620c; }
 .section { scroll-margin-top: 24px; }
-.announcement { padding: 0; }
-.post-meta { color: #666; font-size: 14px; margin-bottom: 20px; }
+.announcement { position: relative; padding: 0; }
+.announcement ~ .announcement { margin-top: 32px; padding-top: 32px; border-top: 1px solid #e5e5e5; }
+.announcement { scroll-margin-top: 24px; }
+.announcement-body { position: relative; }
+.announcement-copy { display: flow-root; }
+.announcement.is-collapsed .announcement-body { max-height: var(--announcement-preview-height); overflow: hidden; }
+.announcement.is-collapsed .announcement-body::after { content: ""; position: absolute; inset: auto 0 0; height: 220px; background: linear-gradient(transparent, rgb(255 255 255 / 80%)); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); -webkit-mask-image: linear-gradient(transparent, black); mask-image: linear-gradient(transparent, black); pointer-events: none; }
+.announcement-toggle { display: block; margin: 16px auto 0; padding: 8px 14px; border: 1px solid #d5d5d5; border-radius: 6px; background: white; color: inherit; font: inherit; font-size: 14px; cursor: pointer; }
+.announcement-toggle[hidden] { display: none; }
+.announcement.is-collapsed .announcement-toggle { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 1; margin: 0; max-width: calc(100% - 32px); }
+.announcement-toggle:hover { background: #f6f6f5; }
+.announcement-toggle:focus-visible { outline: 2px solid #555; outline-offset: 3px; }
+.post-meta { color: #666; font-size: 14px; margin-bottom: 10px; }
 .sample { margin-left: 12px; }
 .prose { overflow-wrap: anywhere; }
 .prose p:last-child { margin-bottom: 0; }
@@ -49,6 +61,16 @@ th { font-weight: 600; vertical-align: bottom; }
 tbody td + td { border-left: 1px solid #e5e5e5; }
 tbody tr + tr td, tbody tr:first-child td { border-top: 1px solid #e5e5e5; }
 .code-column { width: 22%; }
+.course-code-control { display: flex; align-items: flex-start; gap: 4px; }
+.course-code-control > span { min-width: 0; }
+.course-toggle { flex: 0 0 20px; width: 20px; height: 24px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 3px; background: transparent; color: inherit; cursor: pointer; }
+.course-toggle[hidden] { display: none; }
+.course-toggle:hover { background: rgb(0 0 0 / 7%); }
+.course-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.course-toggle[aria-expanded="true"] svg { transform: rotate(90deg); }
+.course-description-row > td { border-top: 0; padding-top: 0; }
+.course-description { padding: 20px 0 8px 24px; }
+.course-description > :first-child { margin-top: 0; }
 .availability-column { width: 28%; }
 .is-running { background: #e9f3ed; color: #293e31; }
 .not-running { background: #fbe9e7; color: #753d36; }
@@ -57,6 +79,8 @@ tbody tr + tr td, tbody tr:first-child td { border-top: 1px solid #e5e5e5; }
 .not-running .status { background: #f0c4be; color: #762d25; }
 .status-unknown { padding: 0; }
 .row-note { display: block; font-size: 12px; color: #666; }
+.course-new { display: inline-block; margin-inline-start: 6px; padding: 0 4px; border: 1px solid #b89a3a; border-radius: 3px; background: #fff1a8; color: #594714; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; line-height: 1.5; vertical-align: baseline; white-space: nowrap; }
+.warning-callout .course-new { margin-inline-start: 0; vertical-align: middle; }
 .archive-heading { margin: 28px 0; }
 .archive-entry { margin-bottom: 24px; }
 .sr-only, .skip:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -70,5 +94,7 @@ tbody tr + tr td, tbody tr:first-child td { border-top: 1px solid #e5e5e5; }
   .warning-callout { padding: 16px; }
   th, td { padding: 8px; font-size: 13px; }
   .course-code { overflow-wrap: anywhere; }
+  .code-column { width: 32%; }
+  .course-description { padding-top: 16px; }
   .sample { display: block; margin-left: 0; }
 }

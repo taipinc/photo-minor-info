@@ -2,7 +2,7 @@
 
 ## Local development
 
-Use Node.js 24. In the app directory, run `npm ci`, then `npm run dev`. Use the URL Astro prints, including the `/photo-minor-info/` path. Save content or CSS to update the preview automatically.
+Use Node.js 24. Run `npm ci` once when setting up the project. For an already configured project, use the existing installed dependencies; do not reinstall them for routine edits or validation. In the app directory, run `npm run dev` when a dev server is needed. Use the URL Astro prints, including the `/photo-minor-info/` path. Save content or CSS to update the preview automatically.
 
 Before publication:
 

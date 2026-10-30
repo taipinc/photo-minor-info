@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import Announcement from '../components/Announcement.astro';
+import CourseRow from '../components/CourseRow.astro';
 import site from '../data/site.json';
 import { publishedAnnouncements, pathTo } from '../lib/content';
 const posts = await publishedAnnouncements();
@@ -13,10 +14,16 @@ for (const course of courses) {
   group.push(course);
   groupedCourses.set(course.data.subjectArea, group);
 }
+const codeOrder = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+for (const entries of groupedCourses.values()) {
+  entries.sort((a, b) => codeOrder.compare(a.data.code, b.data.code));
+}
 const pages = await getCollection('pages');
 const intro = pages.find(p => p.id === 'intro');
 const disclosure = pages.find(p => p.id === 'disclosure');
 const Disclosure = disclosure ? (await render(disclosure)).Content : null;
+const courseDisclosure = pages.find(p => p.id === 'course-disclosure');
+const CourseDisclosure = courseDisclosure ? (await render(courseDisclosure)).Content : null;
 const Intro = intro ? (await render(intro)).Content : null;
 ---
 <Layout home>
@@ -29,26 +36,23 @@ const Intro = intro ? (await render(intro)).Content : null;
     </aside>}
   </section>
   <section class="section" id="announcements" aria-labelledby="updates-heading">
-    <h2 id="updates-heading">Latest announcement</h2>
-    {posts[0] ? <Announcement entry={posts[0]} /> : <p class="empty">No announcements yet. Check back soon.</p>}
+    <h2 id="updates-heading">{site.announcementsHeading}</h2>
+    {posts.length ? posts.slice(0, site.latestAnnouncementsCount).map(entry => <Announcement entry={entry} preview />) : <p class="empty">No announcements yet. Check back soon.</p>}
     {posts.length > 1 && <a class="archive-link" href={pathTo('announcements/')}>Previous announcements</a>}
   </section>
   <section class="section" id="courses" aria-labelledby="courses-heading">
     <h2 id="courses-heading">Courses</h2>
+    {CourseDisclosure && <aside class="warning-callout" aria-label={courseDisclosure!.data.title}>
+      <svg class="warning-icon" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 4.4 2.2 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.8-2.5L13.7 4.4a2 2 0 0 0-3.4 0Z" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+      <div class="prose"><CourseDisclosure /></div>
+    </aside>}
     {courses.some(c => c.data.sample) && <p class="template-note">These are example rows for the template, not actual course offerings.</p>}
     {courses.length ? Array.from(groupedCourses, ([subjectArea, entries], index) => <div class="course-group">
       <div class="table-wrap"><table aria-labelledby={`subject-area-${index}`}>
       <caption class="sr-only">{subjectArea} courses and availability for {site.semester}</caption>
       <colgroup><col class="code-column" /><col /><col class="availability-column" /></colgroup>
       <thead><tr><th colspan="2" scope="colgroup"><h3 id={`subject-area-${index}`}>{subjectArea}</h3></th><th scope="col">Running in {site.semester}</th></tr></thead>
-      <tbody>{entries.map(({ data }) => <tr class:list={{
-        'is-running': data.semester === site.semester && data.offered,
-        'not-running': data.semester === site.semester && !data.offered,
-      }}>
-        <td class="course-code">{data.code}</td>
-        <td><a class="course-link" href={data.catalogUrl} target="_blank" rel="noopener noreferrer">{data.title}</a>{data.sample && <span class="row-note">Example course</span>}</td>
-        <td>{data.semester === site.semester ? <span class="status">{data.offered ? 'Yes' : 'No'}</span> : <span class="status status-unknown">Not updated</span>}</td>
-      </tr>)}</tbody>
+      <tbody>{entries.map(entry => <CourseRow entry={entry} />)}</tbody>
     </table></div></div>) : <p class="empty">Course information will be added here.</p>}
   </section>
 </Layout>

@@ -1,0 +1,44 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import site from '../data/site.json';
+
+interface Props { entry: CollectionEntry<'courses'> }
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+const descriptionId = `course-description-${entry.id}`;
+const classes = {
+  'is-running': data.semester === site.semester && data.offered,
+  'not-running': data.semester === site.semester && !data.offered,
+};
+---
+<tr class:list={classes}>
+  <td class="course-code">
+    <div class="course-code-control">
+      <button class="course-toggle" type="button" hidden aria-expanded="true" aria-controls={descriptionId} aria-label={`Description for ${data.code}: ${data.title}`}>
+        <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="m5 3 6 5-6 5Z" fill="currentColor" /></svg>
+      </button>
+      <span>{data.code}</span>
+    </div>
+  </td>
+  <td><a class="course-link" href={data.catalogUrl} target="_blank" rel="noopener noreferrer">{data.title}</a>{data.new && <span class="course-new">NEW</span>}{data.sample && <span class="row-note">Example course</span>}</td>
+  <td>{data.semester === site.semester ? <span class="status">{data.offered ? 'Yes' : 'No'}</span> : <span class="status status-unknown">Not updated</span>}</td>
+</tr>
+<tr id={descriptionId} class:list={['course-description-row', classes]}>
+  <td colspan="3"><div class="prose course-description">{entry.body?.trim() ? <Content /> : <p class="muted">{site.courseDescriptionFallback}</p>}</div></td>
+</tr>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.course-toggle').forEach((button) => {
+    const description = document.getElementById(button.getAttribute('aria-controls')!);
+    if (!description) return;
+    description.hidden = true;
+    button.setAttribute('aria-expanded', 'false');
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      description.hidden = expanded;
+      button.setAttribute('aria-expanded', String(!expanded));
+    });
+  });
+</script>

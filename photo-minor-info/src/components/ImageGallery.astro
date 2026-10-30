@@ -1,0 +1,88 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { pathTo } from '../lib/content';
+interface Props {
+  images: NonNullable<CollectionEntry<'announcements'>['data']['gallery']>;
+  title: string;
+}
+const { images, title } = Astro.props;
+---
+<div data-image-gallery>
+  <div class="poster-grid" aria-label={title}>
+    {images.map(image => <a href={pathTo(image.image)} data-gallery-image aria-label={`Enlarge: ${image.alt}`}>
+      <img src={pathTo(image.thumbnail)} alt={image.alt} width={image.width} height={image.height} loading="lazy" decoding="async" />
+    </a>)}
+  </div>
+  <dialog class="poster-viewer" aria-label={`${title} — enlarged posters`}>
+    <div class="viewer-stage">
+      <img class="viewer-image" alt="" />
+      <div class="viewer-controls">
+        <button type="button" data-previous aria-label="Previous image (Left arrow)">←</button>
+        <span class="viewer-count" role="status" aria-live="polite" aria-atomic="true"></span>
+        <button type="button" data-next aria-label="Next image (Right arrow)">→</button>
+        <button type="button" data-close aria-label="Close enlarged image (Escape)" autofocus>Close ×</button>
+      </div>
+    </div>
+  </dialog>
+</div>
+
+<style>
+  .poster-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .poster-grid a { display: block; cursor: zoom-in; }
+  .poster-grid img { display: block; width: 100%; height: auto; margin: 0; }
+  .poster-viewer { position: fixed; inset: 0; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; overflow: hidden; }
+  .poster-viewer::backdrop { background: transparent; }
+  .poster-viewer[open] { display: grid; place-items: center; }
+  .viewer-stage { display: grid; justify-items: center; gap: 8px; }
+  .viewer-image { display: block; width: auto; height: auto; max-width: 90vw; max-height: min(90dvh, calc(100dvh - 72px)); object-fit: contain; margin: 0; box-shadow: 0 4px 24px rgb(0 0 0 / 20%); }
+  .viewer-controls { display: flex; align-items: center; gap: 8px; padding: 4px; border-radius: 8px; background: white; color: #292929; box-shadow: 0 2px 12px rgb(0 0 0 / 12%); }
+  .viewer-controls button { min-width: 44px; min-height: 36px; padding: 4px 10px; border: 0; border-radius: 4px; background: white; color: inherit; font: inherit; cursor: pointer; }
+  .viewer-controls button:hover { background: #ededed; }
+  .viewer-controls button:focus-visible { outline: 2px solid #555; outline-offset: 1px; }
+  .viewer-count { min-width: 40px; text-align: center; font-size: 14px; }
+  @media (max-width: 640px) { .poster-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-image-gallery]').forEach(gallery => {
+    const links = Array.from(gallery.querySelectorAll<HTMLAnchorElement>('[data-gallery-image]'));
+    const dialog = gallery.querySelector<HTMLDialogElement>('dialog')!;
+    const image = dialog.querySelector<HTMLImageElement>('.viewer-image')!;
+    const count = dialog.querySelector<HTMLElement>('.viewer-count')!;
+    let index = 0;
+    let opener: HTMLAnchorElement | undefined;
+    let savedOverflow = '';
+    const show = (next: number) => {
+      index = (next + links.length) % links.length;
+      const thumbnail = links[index].querySelector('img')!;
+      image.src = links[index].href;
+      image.alt = thumbnail.alt;
+      image.width = Number(thumbnail.getAttribute('width'));
+      image.height = Number(thumbnail.getAttribute('height'));
+      count.textContent = `${index + 1} / ${links.length}`;
+    };
+    links.forEach((link, position) => link.addEventListener('click', event => {
+      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      opener = link;
+      show(position);
+      savedOverflow = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = 'hidden';
+      dialog.showModal();
+    }));
+    dialog.querySelector('[data-previous]')!.addEventListener('click', () => show(index - 1));
+    dialog.querySelector('[data-next]')!.addEventListener('click', () => show(index + 1));
+    dialog.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+    dialog.addEventListener('keydown', event => {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        show(index + (event.key === 'ArrowLeft' ? -1 : 1));
+      }
+    });
+    dialog.addEventListener('close', () => {
+      document.documentElement.style.overflow = savedOverflow;
+      opener?.focus({ preventScroll: true });
+    });
+  });
+</script>

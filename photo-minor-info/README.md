@@ -10,7 +10,7 @@ The [official Photography Minor program page](https://www.newschool.edu/undergra
 
 Read [Editing content](docs/CONTENT.md) for announcements, courses, semester updates, the welcome message, and images. You can edit Markdown directly on GitHub without installing anything.
 
-**Current content:** the site has one announcement for Remixing the Camera. The 36 courses were imported from the official minor page on October 20, 2026. Spring 2027 availability is demonstration data: 25 Yes and 11 No values selected once at the coordinator’s request. These values have not been verified against the catalog.
+**Current content:** the site has one announcement for Remixing the Camera. The 36 courses were imported from the official minor page on October 20, 2026. The October 28, 2026 review sets Spring 2027 availability to 15 Yes and 21 No. Only confirmed Spring 2027 section listings count as Yes; five inaccessible pages default to No at the coordinator's request. See the [course review](docs/COURSE-REVIEW-SPRING-2027.md) for evidence and limitations.
 
 ## For developers
 

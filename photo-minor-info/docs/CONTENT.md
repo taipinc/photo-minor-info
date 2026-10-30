@@ -8,6 +8,7 @@ Paths in this guide are relative to the application directory (`photo-minor-info
 | --- | --- |
 | Welcome sentence | `src/content/pages/intro.md` |
 | Yellow warning disclosure | `src/content/pages/disclosure.md` |
+| New-course approval disclosure | `src/content/pages/course-disclosure.md` |
 | Announcement posts | `src/content/announcements/*.md` |
 | Course entries | `src/content/courses/*.md` |
 | Current semester and cover settings | `src/data/site.json` |
@@ -39,7 +40,9 @@ sample: false
 Write the announcement below the second `---`. Markdown supports paragraphs, headings, lists, emphasis, and links. Quote a title if it contains a colon, for example `title: "Reminder: registration"`.
 
 - `draft: true` hides a post from the homepage and archive.
-- The newest published date determines the homepage announcement. Dates are ordering fields, not scheduled publication: a future date publishes immediately if `draft` is false.
+- The homepage shows the three newest published announcements, newest first. Dates are ordering fields, not scheduled publication: a future date publishes immediately if `draft` is false.
+- On the homepage, long announcement bodies show a 300px preview with a blurred fade and an **Expand announcement** button. Expanding reveals the full post in place; the button at the end becomes **Collapse announcement**. Several posts can be expanded independently. Short posts need no button. The archive shows full posts, and without JavaScript homepage posts remain fully readable.
+- `latestAnnouncementsCount`, `announcementPreviewHeight`, `announcementsHeading`, `expandAnnouncementLabel`, and `collapseAnnouncementLabel` in `src/data/site.json` control the preview count, height in pixels, heading, and button labels. Descriptions, images, and other post content stay in Markdown.
 - The archive includes all published posts, newest first. The homepage’s **Previous announcements** link appears only when there is more than one published post.
 - `sample: true` adds an example label. Use `false` for actual posts.
 - To keep only one announcement, remove older post files or mark them as drafts.
@@ -58,6 +61,14 @@ A catalog link that opens in a new tab can use HTML inside Markdown:
 <a href="https://courses.newschool.edu/courses/PSAM3805/" target="_blank" rel="noopener noreferrer">View the course in the catalog</a>
 ```
 
+## Poster gallery announcements
+
+Announcements can include an optional `gallery` list in their frontmatter. See `src/content/announcements/2026-10-30-new-courses-spring-2027.md` for the eight-poster example. Each item has `image` (full-size public image path), `thumbnail` (smaller public image path), `alt` (descriptive text), and numeric `width` and `height` for the original aspect ratio. Paths start with `images/`, without a leading slash; the site adds its hosting prefix automatically. The Markdown body can be empty for a gallery-only post.
+
+Gallery posts stay fully visible on the homepage. The grid uses three columns on desktop and two on mobile. Selecting a poster opens a centered image sized to fit within 90% of the viewport, with a transparent backdrop. Use Left/Right arrows or the previous/next buttons to browse; Escape, Close, or clicking outside closes it and returns focus to the selected thumbnail. Without JavaScript, thumbnails link directly to full-size images.
+
+For poster assets, retain the source PNGs and use WebP files for the gallery: the Spring 2027 set uses full-resolution WebPs at quality 90 and 480px-wide thumbnails at quality 85. Check small text when converting new posters.
+
 ## Courses
 
 Each course is one Markdown file; the filename is normally the lowercase code with a hyphen, e.g. `psam-1050.md`. Copy `content-templates/course.md` to add a course.
@@ -68,6 +79,7 @@ code: PSAM 1050
 title: Intro to Photography
 subjectArea: Introduction to Main Concepts
 offered: true
+new: false
 semester: Spring 2027
 catalogUrl: https://courses.newschool.edu/courses/PSAM1050/
 order: 1
@@ -82,13 +94,28 @@ sample: false
 | `title` | Linked course title; quote it if it contains a colon |
 | `subjectArea` | Heading of the group containing this course |
 | `offered` | Boolean `true` for green **Yes**, `false` for red **No** |
+| `new` | Set `true` to show a small yellow monospace **NEW** badge beside the course title; defaults to `false` |
 | `semester` | Semester for which this availability was reviewed |
 | `catalogUrl` | Direct HTTPS course URL on `courses.newschool.edu` |
-| `order` | Lower numbers display first; also determines first appearance of each subject area |
+| `order` | Determines first appearance of each subject area; courses within each group sort by code alphabetically and numerically |
 | `draft` | `true` hides the course |
 | `sample` | `true` adds an example label |
 
-A course has no internal detail page. Its title opens the catalog in a new tab, and its Markdown body is unused. Catalog links use `/courses/PSAM1050/`, not search query URLs. Use unquoted `true` and `false` for boolean fields.
+A course has no internal detail page. Its title opens the catalog in a new tab. Write its description in the Markdown body, below the closing `---`:
+
+```md
+---
+# Course fields above
+---
+
+Explore photographic techniques through studio exercises and an independent project.
+
+You can use **emphasis**, lists, and links in the description.
+```
+
+The triangle before the course code expands the description below that row. Each course opens independently, so several can stay open at once. Rows below an expanded description move down, while column widths and the page's horizontal position stay fixed. Buttons support mouse, touch, Enter, and Space; the linked title still opens the catalog. Without JavaScript, descriptions remain visible. Empty bodies show the placeholder configured in `courseDescriptionFallback` in `src/data/site.json` until a description is added.
+
+Catalog links use `/courses/PSAM1050/`, not search query URLs. Use unquoted `true` and `false` for boolean fields.
 
 The subject areas currently used, in order, are:
 
@@ -102,15 +129,19 @@ Spelling must match exactly for courses to appear in the same group. A new subje
 ### Each semester
 
 1. Set `semester` in `src/data/site.json`, e.g. `"semester": "Spring 2027"`. This updates the **Running in Spring 2027** table headers.
-2. Review every course against its catalog entry. Set its `semester` to match and its `offered` value appropriately.
+2. Review every course against its `catalogUrl`. Set `offered: true` only when the course's own section listing explicitly names the target semester. Set `offered: false` when the page returns 404 or lists only other semesters. A working page alone does not confirm availability, and a full section still counts as running. Set its `semester` to match after review.
 3. Keep a course’s old semester if availability has not been reviewed: it will show **Not updated**, with no Yes/No color. Changing the site semester alone does not confirm availability.
 4. Preview and publish the changes together.
 
-The initial Spring 2027 availability values are demonstration data, not verified offerings. They are fixed in Markdown and never randomized on page load.
+For this Spring 2027 review, the coordinator requested that initial random values be discarded: only a confirmed Spring 2027 section listing yields `offered: true`. After retrying, pages that remain inaccessible default to `offered: false`. Record access failures and conflicting information in the review; a fallback false is not independent verification that the course is unavailable.
+
+The [October 28, 2026 review](COURSE-REVIEW-SPRING-2027.md) sets all 36 courses: 15 Yes and 21 No, including five No values based on the access-failure fallback. Values remain fixed in Markdown and are never randomized on page load.
 
 ## Welcome and disclosure
 
 The welcome paragraph in `intro.md` appears above the yellow warning callout. The disclosure text and official-program link live in `disclosure.md`. Keep the official program page identified as the authoritative source.
+
+The approval note at the top of the Courses section lives in `course-disclosure.md`. Use `<span class="course-new">NEW</span>` to match the badge in the course listings. Keep the coordinator's email link and official program link current.
 
 ## Cover image
 

@@ -1,12 +1,48 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
 import { dateLabel } from '../lib/content';
-interface Props { entry: CollectionEntry<'announcements'> }
-const { entry } = Astro.props;
+import site from '../data/site.json';
+import ImageGallery from './ImageGallery.astro';
+interface Props { entry: CollectionEntry<'announcements'>; preview?: boolean }
+const { entry, preview = false } = Astro.props;
 const { Content } = await render(entry);
+const bodyId = `announcement-body-${entry.id}`;
 ---
-<article class="announcement">
+<article class="announcement" data-announcement-preview={(preview && !entry.data.gallery?.length) || undefined} style={`--announcement-preview-height: ${site.announcementPreviewHeight}px;`}>
   <h3>{entry.data.title}</h3>
   <div class="post-meta"><time datetime={entry.data.date.toISOString()}>{dateLabel(entry.data.date)}</time>{entry.data.sample && <span class="sample">Example announcement</span>}</div>
-  <div class="prose"><Content /></div>
+  <div class="announcement-body" id={bodyId}>
+    <div class="prose announcement-copy"><Content />{entry.data.gallery?.length && <ImageGallery images={entry.data.gallery} title={entry.data.title} />}</div>
+  </div>
+  {preview && !entry.data.gallery?.length && <button class="announcement-toggle" type="button" hidden aria-expanded="true" aria-controls={bodyId} data-expand-label={site.expandAnnouncementLabel} data-collapse-label={site.collapseAnnouncementLabel}>{site.expandAnnouncementLabel}</button>}
 </article>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-announcement-preview]').forEach((article) => {
+    const button = article.querySelector<HTMLButtonElement>('.announcement-toggle');
+    const body = article.querySelector<HTMLElement>('.announcement-body');
+    const copy = article.querySelector<HTMLElement>('.announcement-copy');
+    if (!button || !body || !copy) return;
+    const previewHeight = parseFloat(getComputedStyle(article).getPropertyValue('--announcement-preview-height'));
+    let expanded = false;
+    const update = () => {
+      const overflows = copy.getBoundingClientRect().height > previewHeight;
+      const collapsed = overflows && !expanded;
+      article.classList.toggle('is-collapsed', collapsed);
+      body.inert = collapsed;
+      button.hidden = !overflows;
+      button.setAttribute('aria-expanded', String(!collapsed));
+      button.textContent = expanded ? button.dataset.collapseLabel! : button.dataset.expandLabel!;
+    };
+    button.addEventListener('click', () => {
+      expanded = !expanded;
+      update();
+      if (!expanded && article.getBoundingClientRect().top < 0) {
+        article.scrollIntoView({ block: 'start', behavior: 'instant' });
+        button.focus({ preventScroll: true });
+      }
+    });
+    update();
+    new ResizeObserver(update).observe(copy);
+  });
+</script>
