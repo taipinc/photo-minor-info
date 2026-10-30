@@ -1,0 +1,79 @@
+---
+import site from '../data/site.json';
+---
+<aside class="page-toc" data-page-toc>
+  <nav class="toc-desktop" aria-label={site.tableOfContentsLabel}>
+    <p class="toc-title">{site.tableOfContentsLabel}</p>
+    <ul>{site.tableOfContents.map(item => <li><a href={`#${item.id}`}>{item.label}</a></li>)}</ul>
+  </nav>
+  <details class="toc-mobile">
+    <summary>{site.tableOfContentsLabel}<svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" /></svg></summary>
+    <nav class="toc-mobile-links" aria-label={site.tableOfContentsLabel}>
+      <ul>{site.tableOfContents.map(item => <li><a href={`#${item.id}`}>{item.label}</a></li>)}</ul>
+    </nav>
+  </details>
+</aside>
+
+<style>
+  :global(html) { --section-scroll-offset: 80px; scroll-behavior: smooth; }
+  :global(.home-layout main > section) { scroll-margin-top: var(--section-scroll-offset); }
+  .page-toc { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid #dedede; font-size: 14px; }
+  .toc-desktop { display: none; }
+  .toc-mobile { max-width: 800px; margin: 0 auto; }
+  summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; cursor: pointer; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary:focus-visible { outline: 2px solid #555; outline-offset: -4px; }
+  details[open] summary svg { transform: rotate(180deg); }
+  .toc-mobile-links { position: absolute; top: 100%; left: 12px; right: 12px; max-width: 776px; margin: 0 auto; padding: 8px; border: 1px solid #dedede; border-radius: 0 0 12px 12px; background: white; box-shadow: 0 8px 16px rgb(0 0 0 / 8%); }
+  ul { list-style: none; margin: 0; padding: 0; }
+  a { display: block; padding: 9px 12px; border-radius: 6px; color: #666; text-decoration: none; }
+  a:hover { background: #f5f5f4; color: #292929; }
+  a[aria-current="location"] { font-weight: 600; }
+  .toc-title { margin: 0 0 10px 12px; font-size: 12px; color: #666; }
+  @media (min-width: 1280px) {
+    :global(html) { --section-scroll-offset: 24px; }
+    .page-toc { position: absolute; top: 24px; bottom: 48px; left: calc(50% - 608px); width: 176px; border: 0; background: transparent; z-index: 1; }
+    .toc-desktop { display: block; position: sticky; top: 24px; }
+    .toc-mobile { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { :global(html) { scroll-behavior: auto; } }
+</style>
+
+<script>
+  const toc = document.querySelector<HTMLElement>('[data-page-toc]');
+  if (toc) {
+    const links = Array.from(toc.querySelectorAll<HTMLAnchorElement>('a'));
+    const ids = [...new Set(links.map(link => link.hash.slice(1)))];
+    const sections = ids.map(id => document.getElementById(id)).filter((section): section is HTMLElement => !!section);
+    const menu = toc.querySelector<HTMLDetailsElement>('details')!;
+    const summary = menu.querySelector('summary')!;
+    let pending = false;
+    const update = () => {
+      pending = false;
+      const offset = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--section-scroll-offset')) || 0;
+      let current = sections[0]?.id;
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= offset + 32) current = section.id;
+      }
+      links.forEach(link => {
+        if (link.hash === `#${current}`) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    };
+    const schedule = () => {
+      if (!pending) { pending = true; requestAnimationFrame(update); }
+    };
+    links.forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+    document.addEventListener('click', event => {
+      if (event.target instanceof Node && !toc.contains(event.target)) menu.open = false;
+    });
+    menu.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && menu.open) { menu.open = false; summary.focus(); }
+    });
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    const observer = new ResizeObserver(schedule);
+    sections.forEach(section => observer.observe(section));
+    update();
+  }
+</script>

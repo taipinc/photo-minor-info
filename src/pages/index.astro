@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import Announcement from '../components/Announcement.astro';
 import CourseRow from '../components/CourseRow.astro';
+import CourseFilter from '../components/CourseFilter.astro';
 import site from '../data/site.json';
 import { publishedAnnouncements, pathTo } from '../lib/content';
 const posts = await publishedAnnouncements();
@@ -27,11 +28,11 @@ const CourseDisclosure = courseDisclosure ? (await render(courseDisclosure)).Con
 const Intro = intro ? (await render(intro)).Content : null;
 ---
 <Layout home>
-  <section class="intro" aria-labelledby="page-title">
+  <section class="intro" id="photo-minor-info" aria-labelledby="page-title">
     <h1 id="page-title">Photography Minor Info</h1>
     {Intro && <div class="prose welcome-copy"><Intro /></div>}
-    {Disclosure && <aside class="warning-callout" aria-label="Official program information">
-      <svg class="warning-icon" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 4.4 2.2 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.8-2.5L13.7 4.4a2 2 0 0 0-3.4 0Z" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+    {Disclosure && <aside class="warning-callout info-callout" aria-label="Official program information">
+      <svg class="warning-icon" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 11v6" /><path d="M12 7h.01" /></svg>
       <div class="prose"><Disclosure /></div>
     </aside>}
   </section>
@@ -47,6 +48,7 @@ const Intro = intro ? (await render(intro)).Content : null;
       <div class="prose"><CourseDisclosure /></div>
     </aside>}
     {courses.some(c => c.data.sample) && <p class="template-note">These are example rows for the template, not actual course offerings.</p>}
+    {courses.length > 0 && <CourseFilter />}
     {courses.length ? Array.from(groupedCourses, ([subjectArea, entries], index) => <div class="course-group">
       <div class="table-wrap"><table aria-labelledby={`subject-area-${index}`}>
       <caption class="sr-only">{subjectArea} courses and availability for {site.semester}</caption>

@@ -12,7 +12,7 @@ const classes = {
   'not-running': data.semester === site.semester && !data.offered,
 };
 ---
-<tr class:list={classes}>
+<tr class:list={classes} data-course-row data-course-running={String(classes['is-running'])}>
   <td class="course-code">
     <div class="course-code-control">
       <button class="course-toggle" type="button" hidden aria-expanded="true" aria-controls={descriptionId} aria-label={`Description for ${data.code}: ${data.title}`}>
@@ -24,7 +24,7 @@ const classes = {
   <td><a class="course-link" href={data.catalogUrl} target="_blank" rel="noopener noreferrer">{data.title}</a>{data.new && <span class="course-new">NEW</span>}{data.sample && <span class="row-note">Example course</span>}</td>
   <td>{data.semester === site.semester ? <span class="status">{data.offered ? 'Yes' : 'No'}</span> : <span class="status status-unknown">Not updated</span>}</td>
 </tr>
-<tr id={descriptionId} class:list={['course-description-row', classes]}>
+<tr id={descriptionId} class:list={['course-description-row', classes]} data-course-running={String(classes['is-running'])}>
   <td colspan="3"><div class="prose course-description">{entry.body?.trim() ? <Content /> : <p class="muted">{site.courseDescriptionFallback}</p>}</div></td>
 </tr>
 

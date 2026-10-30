@@ -1,6 +1,7 @@
 ---
 import site from '../data/site.json';
 import { pathTo } from '../lib/content';
+import TableOfContents from '../components/TableOfContents.astro';
 import '../styles/global.css';
 interface Props { title?: string; home?: boolean }
 const { title, home = false } = Astro.props;
@@ -20,8 +21,11 @@ const { title, home = false } = Astro.props;
       <img src={pathTo(site.coverImage)} alt={site.coverAlt} style={`object-position: ${site.coverPosition}`} fetchpriority="high" />
       {site.coverCredit && <figcaption>{site.coverCredit}</figcaption>}
     </figure>}
-    <div class:list={['sheet', { 'inner-sheet': !home }]}>
-      <main id="main"><slot /></main>
+    <div class:list={{ 'home-layout': home }}>
+      {home && <TableOfContents />}
+      <div class:list={['sheet', { 'inner-sheet': !home }]}>
+        <main id="main"><slot /></main>
+      </div>
     </div>
   </body>
 </html>

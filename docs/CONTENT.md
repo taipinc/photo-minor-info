@@ -7,10 +7,11 @@ Paths in this guide are relative to the application directory (`photo-minor-info
 | Content | File or directory |
 | --- | --- |
 | Welcome sentence | `src/content/pages/intro.md` |
-| Yellow warning disclosure | `src/content/pages/disclosure.md` |
+| Green program information disclosure | `src/content/pages/disclosure.md` |
 | New-course approval disclosure | `src/content/pages/course-disclosure.md` |
 | Announcement posts | `src/content/announcements/*.md` |
 | Course entries | `src/content/courses/*.md` |
+| Contents navigation labels and section links | `src/data/site.json` (`tableOfContentsLabel`, `tableOfContents`) |
 | Current semester and cover settings | `src/data/site.json` |
 | Photos, animated GIFs, and posters | `public/images/` |
 | Blank starting files | `content-templates/` |
@@ -41,7 +42,7 @@ Write the announcement below the second `---`. Markdown supports paragraphs, hea
 
 - `draft: true` hides a post from the homepage and archive.
 - The homepage shows the three newest published announcements, newest first. Dates are ordering fields, not scheduled publication: a future date publishes immediately if `draft` is false.
-- On the homepage, long announcement bodies show a 300px preview with a blurred fade and an **Expand announcement** button. Expanding reveals the full post in place; the button at the end becomes **Collapse announcement**. Several posts can be expanded independently. Short posts need no button. The archive shows full posts, and without JavaScript homepage posts remain fully readable.
+- On the homepage, long announcement bodies show a 300px preview with a soft fade (no blur) and an **Expand announcement** button over the bottom of the preview. Expanding reveals the full post in place; the button at the end becomes **Collapse announcement**. Several posts can be expanded independently. Short posts need no button. The archive shows full posts, and without JavaScript homepage posts remain fully readable.
 - `latestAnnouncementsCount`, `announcementPreviewHeight`, `announcementsHeading`, `expandAnnouncementLabel`, and `collapseAnnouncementLabel` in `src/data/site.json` control the preview count, height in pixels, heading, and button labels. Descriptions, images, and other post content stay in Markdown.
 - The archive includes all published posts, newest first. The homepage’s **Previous announcements** link appears only when there is more than one published post.
 - `sample: true` adds an example label. Use `false` for actual posts.
@@ -65,7 +66,7 @@ A catalog link that opens in a new tab can use HTML inside Markdown:
 
 Announcements can include an optional `gallery` list in their frontmatter. See `src/content/announcements/2026-10-30-new-courses-spring-2027.md` for the eight-poster example. Each item has `image` (full-size public image path), `thumbnail` (smaller public image path), `alt` (descriptive text), and numeric `width` and `height` for the original aspect ratio. Paths start with `images/`, without a leading slash; the site adds its hosting prefix automatically. The Markdown body can be empty for a gallery-only post.
 
-Gallery posts stay fully visible on the homepage. The grid uses three columns on desktop and two on mobile. Selecting a poster opens a centered image sized to fit within 90% of the viewport, with a transparent backdrop. Use Left/Right arrows or the previous/next buttons to browse; Escape, Close, or clicking outside closes it and returns focus to the selected thumbnail. Without JavaScript, thumbnails link directly to full-size images.
+Gallery posts use the same expandable homepage preview as other announcements; expand the announcement to interact with the posters. The grid uses three columns on desktop and two on mobile. Selecting a poster opens a centered image sized to fit within 90% of the viewport, with a transparent backdrop. Use Left/Right arrows or the previous/next buttons to browse; Escape, Close, or clicking outside closes it and returns focus to the selected thumbnail. Without JavaScript, thumbnails link directly to full-size images.
 
 For poster assets, retain the source PNGs and use WebP files for the gallery: the Spring 2027 set uses full-resolution WebPs at quality 90 and 480px-wide thumbnails at quality 85. Check small text when converting new posters.
 
@@ -100,6 +101,8 @@ sample: false
 | `order` | Determines first appearance of each subject area; courses within each group sort by code alphabetically and numerically |
 | `draft` | `true` hides the course |
 | `sample` | `true` adds an example label |
+
+Above the tables, a right-aligned switch with the label **Show [semester] courses only** to its left filters the list. It is off by default, showing all courses. The semester comes from `src/data/site.json`. Turning it on shows only courses marked `offered: true` whose semester matches the site semester; empty subject areas disappear. Turning it off restores every course and preserves expanded descriptions. The filter is hidden without JavaScript. Labels and the empty-result message are configurable with the `courseFilter*` settings in `src/data/site.json`.
 
 A course has no internal detail page. Its title opens the catalog in a new tab. Write its description in the Markdown body, below the closing `---`:
 
@@ -139,7 +142,7 @@ The [October 28, 2026 review](COURSE-REVIEW-SPRING-2027.md) sets all 36 courses:
 
 ## Welcome and disclosure
 
-The welcome paragraph in `intro.md` appears above the yellow warning callout. The disclosure text and official-program link live in `disclosure.md`. Keep the official program page identified as the authoritative source.
+The welcome paragraph in `intro.md` appears above the green information callout with a circled information icon. The disclosure text and official-program link live in `disclosure.md`. Keep the official program page identified as the authoritative source.
 
 The approval note at the top of the Courses section lives in `course-disclosure.md`. Use `<span class="course-new">NEW</span>` to match the badge in the course listings. Keep the coordinator's email link and official program link current.
 
@@ -167,3 +170,9 @@ sips -s format jpeg -s formatOptions 82 --resampleWidth 2400 input.heic --out pu
 ```
 
 Inspect the result before publishing. Use image description text in `coverAlt` and in Markdown image brackets.
+
+## Contents navigation
+
+The homepage has a sticky contents list in the left margin on screens at least 1280px wide. Smaller screens use a sticky **On this page** menu below the cover; it opens over the page and closes when a link is selected, outside it is clicked, or Escape is pressed. Links jump to the three main sections and mark the current section in bold as you scroll. Smooth scrolling respects reduced-motion preferences.
+
+Edit `tableOfContentsLabel` and the `tableOfContents` array in `src/data/site.json` to change the labels. Each item’s `id` must match a homepage section ID: `photo-minor-info`, `announcements`, or `courses`. The archive has no contents menu.

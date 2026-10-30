@@ -2,8 +2,16 @@
   "title": "Photography Minor",
   "institution": "Parsons School of Design",
   "description": "Announcements and course information for the Photography Minor at Parsons.",
+  "tableOfContentsLabel": "On this page",
+  "tableOfContents": [
+    { "id": "photo-minor-info", "label": "Photo Minor Info" },
+    { "id": "announcements", "label": "Announcements" },
+    { "id": "courses", "label": "Courses" }
+  ],
   "semester": "Spring 2027",
   "courseDescriptionFallback": "A description hasn't been added yet.",
+  "courseFilterLabel": "Show {semester} courses only",
+  "courseFilterEmptyMessage": "No courses are listed as running this semester.",
   "latestAnnouncementsCount": 3,
   "announcementPreviewHeight": 300,
   "announcementsHeading": "Latest announcements",

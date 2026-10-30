@@ -8,13 +8,13 @@ const { entry, preview = false } = Astro.props;
 const { Content } = await render(entry);
 const bodyId = `announcement-body-${entry.id}`;
 ---
-<article class="announcement" data-announcement-preview={(preview && !entry.data.gallery?.length) || undefined} style={`--announcement-preview-height: ${site.announcementPreviewHeight}px;`}>
+<article class="announcement" data-announcement-preview={preview || undefined} style={`--announcement-preview-height: ${site.announcementPreviewHeight}px;`}>
   <h3>{entry.data.title}</h3>
   <div class="post-meta"><time datetime={entry.data.date.toISOString()}>{dateLabel(entry.data.date)}</time>{entry.data.sample && <span class="sample">Example announcement</span>}</div>
   <div class="announcement-body" id={bodyId}>
     <div class="prose announcement-copy"><Content />{entry.data.gallery?.length && <ImageGallery images={entry.data.gallery} title={entry.data.title} />}</div>
   </div>
-  {preview && !entry.data.gallery?.length && <button class="announcement-toggle" type="button" hidden aria-expanded="true" aria-controls={bodyId} data-expand-label={site.expandAnnouncementLabel} data-collapse-label={site.collapseAnnouncementLabel}>{site.expandAnnouncementLabel}</button>}
+  {preview && <button class="announcement-toggle" type="button" hidden aria-expanded="true" aria-controls={bodyId} data-expand-label={site.expandAnnouncementLabel} data-collapse-label={site.collapseAnnouncementLabel}>{site.expandAnnouncementLabel}</button>}
 </article>
 
 <script>
