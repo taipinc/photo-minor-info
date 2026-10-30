@@ -1,26 +1,24 @@
 # Project structure and design decisions
 
 ```text
-repository root/
-  README.md
+photo-minor-info/ (repository root)
   .github/workflows/deploy.yml
-  photo-minor-info/
-    AGENTS.md
-    README.md
-    docs/
-    content-templates/
-    public/images/
-    src/
-      content.config.ts
-      content/{announcements,courses,pages}/
-      data/site.json
-      lib/content.ts
-      components/Announcement.astro
-      components/CourseRow.astro
-      components/ImageGallery.astro
-      layouts/Layout.astro
-      pages/{index,announcements}.astro
-      styles/global.css
+  AGENTS.md
+  README.md
+  docs/
+  content-templates/
+  public/images/
+  src/
+    content.config.ts
+    content/{announcements,courses,pages}/
+    data/site.json
+    lib/content.ts
+    components/Announcement.astro
+    components/CourseRow.astro
+    components/ImageGallery.astro
+    layouts/Layout.astro
+    pages/{index,announcements}.astro
+    styles/global.css
 ```
 
 ## Rendering and content

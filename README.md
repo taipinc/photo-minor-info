@@ -17,7 +17,6 @@ Read [Editing content](docs/CONTENT.md) for announcements, courses, semester upd
 Use Node.js 24 and npm. From the repository root:
 
 ```sh
-cd photo-minor-info
 npm ci
 npm run dev
 ```
@@ -38,6 +37,6 @@ The build produces static files in `dist/`. Dependencies are locked in `package-
 
 ## Repository layout
 
-The Astro application lives in the `photo-minor-info/` directory inside the Git repository. On the original machine, the repository checkout happens to be named `teaching-docs`; that local directory name is not the GitHub repository name. The remote is `taipinc/photo-minor-info`.
+The `photo-minor-info/` folder is the Git repository root and contains the Astro application. The remote is `taipinc/photo-minor-info`. Its parent `teaching-docs/` is only a container for separate projects.
 
-The active deployment workflow is **`../.github/workflows/deploy.yml`**, at the Git repository root. GitHub does not discover workflows inside the app subdirectory.
+The deployment workflow is **`.github/workflows/deploy.yml`**, inside this repository.

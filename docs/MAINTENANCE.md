@@ -30,15 +30,15 @@ gh api --method POST repos/taipinc/photo-minor-info/pages -f build_type=workflow
 
 If a Pages site already exists, inspect its configuration before changing it.
 
-Push app changes to `main` to deploy. The workflow runs on changes under `photo-minor-info/**` or to its root workflow file. Documentation-only changes at the repository root do not need a site rebuild. The workflow can also be run manually through **Actions → Deploy Photography Minor to GitHub Pages → Run workflow**.
+Push app changes to `main` to deploy. The workflow runs on every push to `main`. The workflow can also be run manually through **Actions → Deploy Photography Minor to GitHub Pages → Run workflow**.
 
-The build job installs the lockfile with Node.js 24, runs Astro checks, builds, and uploads `photo-minor-info/dist`. The deploy job publishes that artifact with GitHub Pages. The workflow uses the repository’s normal `GITHUB_TOKEN`; no personal token or Notion credentials are required by the site.
+The build job installs the lockfile with Node.js 24, runs Astro checks, builds, and uploads `dist`. The deploy job publishes that artifact with GitHub Pages. The workflow uses the repository’s normal `GITHUB_TOKEN`; no personal token or Notion credentials are required by the site.
 
 Example commands from the repository root:
 
 ```sh
 git status --short
-git add photo-minor-info .github/workflows/deploy.yml README.md
+git add <changed-files>
 git diff --cached --stat
 git commit -m "Update Photography Minor information"
 git push origin main
@@ -46,7 +46,7 @@ gh run list --workflow deploy.yml --limit 5
 gh run view RUN_ID
 ```
 
-Stage only files belonging to this project. The original checkout also contains unrelated `my-slides/` and `my-tools/` directories. Do not stage those or use `git add .` without inspecting the repository.
+Run Git commands inside `photo-minor-info/`, the repository root. The parent `teaching-docs/` is not a repository; sibling projects such as `my-slides/` and `my-tools/` have separate Git setups. Inspect `git status` and stage only intended changes.
 
 Verify the workflow’s final result and the live site before reporting deployment complete.
 

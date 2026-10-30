@@ -12,7 +12,7 @@ These instructions apply to this directory and its descendants. Follow the human
 
 ## Repository and editing
 
-- The app is a subdirectory of the Git repository. Its active workflow is at the repository root: `../.github/workflows/deploy.yml`. Do not put an active workflow inside the app.
+- The app directory is the Git repository root. Its deployment workflow is `.github/workflows/deploy.yml`. The parent `teaching-docs/` directory is not a repository.
 - Do not touch or stage unrelated `my-slides/` or `my-tools/` directories in the original checkout. Inspect `git status` and stage specific paths.
 - Edit the real Git checkout. Any exported ZIPs or chat preview copies are conveniences, not a second source of truth. If using a separate preview copy, synchronize requested changes deliberately and verify the checkout before committing.
 - Keep content in Markdown and settings in `src/data/site.json`, rather than hardcoding editorial text in components.
